@@ -9,13 +9,18 @@ const fs = require('fs');
 
 
 function vConsolePlugin(options) {
-    this.options = options
+    this.options = Object.assign({
+        filter: [],
+    }, options);
+    if (typeof this.options.filter === 'string') {
+        this.options.filter = [this.options.filter];
+    }
 }
 
 vConsolePlugin.prototype.apply = function(compiler) {
-    let pathVconsole = 'vconsole-webpack-plugin/src/vconsole.js';
+    let pathVconsole = 'vc-webpack-plugin/src/vconsole.js';
     const _root = module.parent.paths.find(item => {
-        let tmpPathVconsole = path.join(item, 'vconsole-webpack-plugin/src/vconsole.js');
+        let tmpPathVconsole = path.join(item, 'vc-webpack-plugin/src/vconsole.js');
         if (fs.existsSync(item) && fs.existsSync(tmpPathVconsole)) {
             pathVconsole = tmpPathVconsole;
             return true;
@@ -29,7 +34,7 @@ vConsolePlugin.prototype.apply = function(compiler) {
             if (!checkFilter([entry], that.options.filter)) {
                 // TODO: entry 为 string 时，修改不了，只有 object 才可以修改
                 entry = [pathVconsole, entry];
-                console.warn('[vconsole-webpack-plugin] 暂不支持 entry 为 string 类型的情况\n');
+                console.warn('[vc-webpack-plugin] 暂不支持 entry 为 string 类型的情况\n');
             }
         } else if (Object.prototype.toString.call(entry) === '[object Array]') {
             if (!checkFilter(entry, that.options.filter)) {
